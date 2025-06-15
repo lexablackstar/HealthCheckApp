@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Manage Departments{% endblock %}
+{% block content %}
+<h2>Manage Departments</h2>
+<hr/>
+
+<table>
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 50%;">
+        <col style="width: 20%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Department Name</th>
+            <th>Teams</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for department in departments %}
+        <tr>
+            <td>{{ department.name }}</td>
+            <td>
+                {% for team in department.teams.all %}
+                    {{ team.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td align="right">
+                <a href="{% url 'edit_department' department.id %}" class="btn btn-sm btn-outline-success">Edit</a>
+                <a href="{% url 'delete_department' department.id %}" class="btn btn-sm btn-outline-danger" 
+                    onclick="return confirm('Are you sure you want to remove {{ department.name }}?');">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br/>
+<div class="mb-3 text-end">
+    <a href="{% url 'create_department' %}" class="btn btn-outline-dark mb-3">Create New Department</a>
+</div
+
+{% endblock %}

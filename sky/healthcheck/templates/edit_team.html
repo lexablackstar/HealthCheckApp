@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Edit Team{% endblock %}
+{% block content %}
+<h2>Edit Team: {{ team.name }}</h2>
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="name">Team Name</label>
+        <input type="text" name="name" id="name" maxlength="30" class="form-control" value="{{ team.name }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="engineers">Assign Engineers</label>
+        <select name="engineers" id="engineers" class="form-control" multiple>
+            {% for engineer in engineers %}
+            <option value="{{ engineer.id }}" {% if engineer in team.engineers.all %}selected{% endif %}>
+                {{ engineer.username }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3 text-center">
+        <button type="submit" class="btn btn-outline-success w-35">Save Changes</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-25">Cancel</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.first_name }} {{ user.last_name}} </h2>
+
+{% if user.userprofile.role == 'Admin' %}
+
+    <hr>
+    <h3>All Departments</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 55%;">
+            <col style="width: 15%;">
+        </colgroup>
+        <thead>
+            <th>Department Name</th>
+            <th>Teams</th>
+            <th></th>
+        </thead>
+
+        {% for department in departments %}
+            <tr>
+                <td><b>{{ department.name }}</b> (Manager: {{ department.leader.first_name }} {{ department.leader.first_name }} )</td>
+                <td>
+
+                    {% for team in department.teams.all %}
+                        {{ team.name }} (Team Leader: {{team.leader.first_name}} {{team.leader.last_name}}) <br/>
+                    {% endfor %}
+                </td>
+                <td style="text-align: end;">
+                    <a href="{% url 'edit_department' department.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_department' department.id %}" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Are you sure you want to remove {{ department.name }}?');">Delete</a>
+                </td>    
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <div class="mb-3 text-end">
+        <a href="{% url 'create_department' %}" class="btn btn-outline-dark">New Department</a>
+    </div>
+    <br/><br/>
+
+    <hr>
+    <h3>All Teams</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 55%;">
+            <col style="width: 15%;">
+        </colgroup>
+        <thead>
+            <th>Team Name</th>
+            <th>Engineers</th>
+            <th></th>
+        </thead>
+
+        {% for team in teams %}
+            <tr>
+                <td><b>{{ team.name }}</b> (Manager: {{ team.leader.first_name }} {{ team.leader.first_name }} )</td>
+                <td>
+                    {% for engineer in team.engineers.all %}
+                        {{ engineer.first_name }} {{ engineer.last_name }} (Username: {{ engineer.username }}) <br/>
+                    {% endfor %}
+                </td>
+                <td style="text-align: end;">
+                    <a href="{% url 'edit_team' team.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_team' team.id %}" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Are you sure you want to remove {{ team.name }}?');">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <div class="mb-3 text-end">
+        <a href="{% url 'create_team' %}" class="btn btn-outline-dark">New Team</a>
+    </div>
+    <br/><br/>
+
+
+    <hr>
+    <h3>All Users</h3>
+    <table>
+        <colgroup>
+            <col style="width: 20%;">
+            <col style="width: 15%;">
+            <col style="width: 30%;">
+            <col style="width: 20%;">
+            <col style="width: 15%;">
+        </colgroup>
+        <thead>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th></th>
+        </thead>
+
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.userprofile.role }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td style="text-align: end;">
+                    <a href="{% url 'user_update' user.username %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_user' user.username %}" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Are you sure you want to remove {{ user.first_name }} {{ user.last_name }}?');">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/><br/>
+
+
+
+{% elif user.userprofile.role == 'Senior Manager' %}
+    <hr>
+    <h3>All Departments</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 70%;">
+        </colgroup>
+        <thead>
+            <th>Department Name</th>
+            <th></th>
+        </thead>
+
+        {% for department in departments %}
+            <tr>
+                <td><b>{{ department.name }}</b> (Manager: {{ department.leader.first_name }} {{ department.leader.first_name }} )</td>
+                <td>
+                    <table>
+                        <colgroup>
+                            <col style="width: 30%;">
+                            <col style="width: 30%;">
+                            <col style="width: 40%;">
+                        </colgroup>
+                        <thead>
+                            <th>Team Name</th>
+                            <th>Team Leader</th>
+                            <th>Engineers</th>
+                        </thead>
+                        {% for team in department.teams.all %}
+                        <tr>
+                            <td>{{ team.name }}</td>
+                            <td>{{team.leader.first_name}} {{team.leader.last_name}}</td>
+                            <td>
+                                {% for engineer in team.engineers.all %}
+                                    {{ engineer.first_name }} {{ engineer.last_name }} (Username: {{ engineer.username }}) <br/>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                        <!-- {{ team.name }} (Team Leader: {{team.leader.first_name}} {{team.leader.last_name}}) <br/> -->
+                    
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/><br/>
+
+    <!-- Add Reporting here -->
+
+
+{% elif user.userprofile.role == 'Department Leader' %}
+
+    <hr>
+    <h3>Your Departments</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 55%;">
+            <col style="width: 15%;">
+        </colgroup>
+        <thead>
+            <th>Department Name</th>
+            <th>Teams</th>
+            <th></th>
+        </thead>
+
+        {% for department in departments %}
+            <tr>
+                <td><b>{{ department.name }}</b></td>
+                <td>
+                    {% for team in department.teams.all %}
+                        {{ team.name }} (Team Leader: {{team.leader.first_name}} {{team.leader.last_name}}) <br/>
+                    {% endfor %}
+                </td>
+                <td style="text-align: end;">
+                    <a href="{% url 'edit_department' department.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_department' department.id %}" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Are you sure you want to remove {{ department.name }}?');">Delete</a>
+
+                </td>    
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <div class="mb-3 text-end">
+        <a href="{% url 'create_department' %}" class="btn btn-outline-dark">New Department</a>
+    </div>
+    <br/><br/>
+
+
+{% elif user.userprofile.role == 'Team Leader' %}
+
+    <hr>
+    <h3>Your Teams</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 55%;">
+            <col style="width: 15%;">
+        </colgroup>
+        <thead>
+            <th>Team Name</th>
+            <th>Engineers</th>
+            <th></th>
+        </thead>
+
+        {% for team in teams %}
+            <tr>
+                <td><b>{{ team.name }}</b></td>
+                <td>
+                    {% for engineer in team.engineers.all %}
+                        {{ engineer.first_name }} {{ engineer.last_name }} (Username: {{ engineer.username }}) <br/>
+                    {% endfor %}
+                </td>
+                <td style="text-align: end;">
+                    <a href="{% url 'edit_team' team.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_team' team.id %}" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Are you sure you want to remove {{ team.name }}?');">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <div class="mb-3 text-end">
+        <a href="{% url 'create_team' %}" class="btn btn-outline-dark">New Team</a>
+    </div>
+    <br/><br/>
+
+
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-start">Your Current Sessions</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 30%;">
+                        <col style="width: 55%;">
+                        <col style="width: 15%;">
+                    </colgroup>        
+                    <thead>
+                        <th>Session Name</th>
+                        <th>Questions</th>
+                        <th></th>
+                    </thead>
+            
+                    {% for session in sessions %}
+                        <tr>
+                            <td style="text-align: left;">
+                                {{ session }}
+                            </td>
+                            <td style="text-align: left;">
+                                <p class="text-small">
+                                {% for question in session.questions.all %}
+                                    {{ question.text }} <br/>
+                                {% endfor %}
+                                </p>
+                            </td>
+                            <td style="text-align: end;">
+                            </td>
+                        </tr>
+                    {% endfor %}
+            
+                </table>
+                <br/>
+                <div class="mb-3 text-end">
+                    <a href="{% url 'create_session' %}" class="btn btn-outline-dark">Create Session</a>
+                </div>
+
+            </div>
+
+            <div class="col" style="border-left: 1px solid #ccc;background-color: #f9f9f9;">
+            
+                <h3 class="text-center">Analysis</h3>
+                <br/>
+                <p align="center">Here you can see the analysis of the votes for your team.
+                <br/><br/>
+                <a href="{% url 'team_progress' %}" class="btn btn-outline-dark text-center">Team Progress</a>
+                <a href="{% url 'vote_analysis' %}" class="btn btn-outline-dark text-center">Vote Analysis</a>
+                </p>
+    
+            </div>
+        </div>
+    </div>
+    <hr/>
+    
+    <br/>
+
+{% elif user.userprofile.role == 'Engineer' %}
+    
+    <hr>
+    <h3 class="text-start">Sessions open for you</h3>
+    <table>
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 55%;">
+            <col style="width: 15%;">
+        </colgroup>        
+        <thead>
+            <th>Session Name</th>
+            <th>Questions</th>
+            <th></th>
+        </thead>
+
+        {% for session in sessions %}
+            <tr>
+                <td style="text-align: left;">
+                    {{ session }}
+                </td>
+                <td style="text-align: left;">
+                    <p class="text-small">
+                    {% for question in session.questions.all %}
+                        {{ question.text }} <br/>
+                    {% endfor %}
+                    </p>
+                </td>
+                <td style="text-align: end;">
+                    <a href="{% url 'uservoting' session.id %}" class="btn btn-outline-success btn-sm">Start Voting</a> 
+                </td>
+            </tr>
+        {% endfor %}
+
+    </table>
+    <br/>
+
+
+    
+{% endif %}
+
+
+
+{% endblock %}
